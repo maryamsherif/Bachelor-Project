@@ -5,6 +5,7 @@ import numpy as np
 import mediapipe as mp
 import cv2
 
+
 # Image Control Variables
 pictures = os.listdir("images")
 img1 = cv2.imread(os.path.join("images", pictures[1]), cv2.IMREAD_UNCHANGED)
