@@ -4,6 +4,8 @@ import os
 import subprocess
 import threading
 import sys
+from tkinter import filedialog
+
 from PIL import Image, ImageTk
 
 # Global variables to store the thread running the ImageControl.py script and the process ID
