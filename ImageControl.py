@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 import mediapipe as mp
 import cv2
-
+import cvzone
 
 # Image Control Variables
 pictures = os.listdir("images")
@@ -16,11 +16,17 @@ scale_factor = 1.0
 img1 = cv2.resize(img1, (250, 250), fx=scale_factor, fy=scale_factor)
 img1 = img1[:, :, :3]
 startDist = None
-angle = 0
+
+
 # Define initial position of image
 x_pos = 100
 y_pos = 100
 display_width, display_height = 640, 480
+
+#Rotation Variables
+angle = 0
+rotateLeft = False
+rotateRight = False
 
 # Load the model
 model = tf.keras.models.load_model("cnn_model.h5")
@@ -133,16 +139,13 @@ with mp_holistic.Holistic(
                 elif actions[np.argmax(res)] == "Move Right":
                     x_pos += 10
                 elif actions[np.argmax(res)] == "Rotate Right":
-                    # angle += 10
-                    # img1 = cvzone.rotateImage(img1, angle)
-                    print("beb")
+                    angle += 5
+                    img1 = cvzone.rotateImage(img1, angle)
                 elif actions[np.argmax(res)] == "Rotate Left":
-                    # angle -= 10
-                    # img1 = cvzone.rotateImage(img1, angle)
-                    print("beb")
+                    angle -= 5
+                    img1 = cvzone.rotateImage(img1, angle)
                 elif actions[np.argmax(res)] == "Zoom In":
                     scale_factor += 0.1
-                   
                 elif actions[np.argmax(res)] == "Zoom Out":
                     scale_factor -= 0.1
                     if scale_factor < 0.1:
