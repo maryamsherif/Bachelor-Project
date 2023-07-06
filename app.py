@@ -5,7 +5,6 @@ import subprocess
 import threading
 import sys
 from tkinter import filedialog
-
 from PIL import Image, ImageTk
 
 # Global variables to store the thread running the ImageControl.py script and the process ID
@@ -94,38 +93,38 @@ content_frame.pack(pady=20)
 window.state('zoomed')
 
 # Create the welcome label
-welcome_label = tk.Label(window, text="Welcome to Image Control App", font=("Arial", 18))
+welcome_label = tk.Label(window, text="Welcome to Image Control App!", font=("Arial Bold", 45))
 welcome_label.pack(pady=10)
 
 # Create the app description label
 description_label = tk.Label(window, text="This app allows you to control your design using your right hand movements.",
-                             font=("Arial", 14))
+                             font=("Arial", 20))
 description_label.pack(pady=10)
 
 # Create the app description label
-description1_label = tk.Label(window, text="You can move the image, zoom it and rotate it.", font=("Arial", 14))
+description1_label = tk.Label(window, text="You can scale, rotate and move the image.", font=("Arial", 20))
 description1_label.pack(pady=10)
 
 # Create the instructions label
-instructions_label = tk.Label(window, text="To start the image capturing, click the 'Start' button.",
-                              font=("Arial", 12))
+instructions_label = tk.Label(window, text="To start the image capturing, please select your design then click 'Start'",
+                              font=("Arial Bold italic", 24))
 instructions_label.pack(pady=10)
 
 # Create the label for the wait message
 wait_label = tk.Label(window, text="", font=("Arial", 12))
 wait_label.pack(pady=10)
 
+# Create the Upload Picture button
+upload_button = tk.Button(window, text="Select Picture", font=("Arial Bold", 20), command=upload_button_clicked)
+upload_button.pack(pady=10)
+
 # Create the Start button
-start_button = tk.Button(window, text="Start", font=("Arial", 14), command=start_button_clicked)
+start_button = tk.Button(window, text="Start", font=("Arial Bold", 20), command=start_button_clicked)
 start_button.pack(pady=10)
 
 # Create the Stop button
-stop_button = tk.Button(window, text="Stop", font=("Arial", 14), command=stop_button_clicked)
+stop_button = tk.Button(window, text="Stop", font=("Arial Bold", 20), command=stop_button_clicked)
 stop_button.pack(pady=10)
-
-# Create the Upload Picture button
-upload_button = tk.Button(window, text="Upload Picture", font=("Arial", 14), command=upload_button_clicked)
-upload_button.pack(pady=10)
 
 
 # Start the main event loop

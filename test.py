@@ -8,7 +8,7 @@ import cvzone
 
 # Image Control Variables
 pictures = os.listdir("images")
-img1 = cv2.imread(os.path.join("images", pictures[0]), cv2.IMREAD_UNCHANGED)
+img1 = cv2.imread(os.path.join("images", pictures[1]), cv2.IMREAD_UNCHANGED)
 
 # Resize image
 scale_factor = 1.0
@@ -17,12 +17,13 @@ img1 = cv2.resize(img1, (250, 250), fx=scale_factor, fy=scale_factor)
 img1 = img1[:, :, :3]
 startDist = None
 
+
 # Define initial position of image
 x_pos = 100
 y_pos = 100
 display_width, display_height = 640, 480
 
-# Rotation Variables
+#Rotation Variables
 angle = 0
 rotateLeft = False
 rotateRight = False
@@ -57,8 +58,8 @@ def draw_styled_landmarks(image, results):
         image,
         results.right_hand_landmarks,
         mp_holistic.HAND_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=1, circle_radius=4),
-        mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=1, circle_radius=2),
+        mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=4),
+        mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
     )
 
 
@@ -107,11 +108,9 @@ cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
 
-maxScale=False
-minScale=False
 # Set mediapipe model
 with mp_holistic.Holistic(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5
+    min_detection_confidence=0.5, min_tracking_confidence=0.5
 ) as holistic:
     while cap.isOpened():
         # Read feed
@@ -127,7 +126,6 @@ with mp_holistic.Holistic(
         sequence = sequence[-30:]
         res = np.zeros(len(actions))  # define a default value for res
 
-
         if len(sequence) == 30:
             res = model.predict(np.expand_dims(sequence, axis=0))[0]
 
@@ -141,21 +139,17 @@ with mp_holistic.Holistic(
                 elif actions[np.argmax(res)] == "Move Right":
                     x_pos += 10
                 elif actions[np.argmax(res)] == "Rotate Right":
-                    angle += 1
+                    angle += 5
                     img1 = cvzone.rotateImage(img1, angle)
                 elif actions[np.argmax(res)] == "Rotate Left":
-                    angle -= 1
+                    angle -= 5
                     img1 = cvzone.rotateImage(img1, angle)
                 elif actions[np.argmax(res)] == "Zoom In":
-                    if scale_factor >= 1.2:
-                        scale_factor = 1.1
-                    else:
-                        scale_factor += 0.1
+                    scale_factor += 0.1
                 elif actions[np.argmax(res)] == "Zoom Out":
-                    if scale_factor < 1.0:
-                        scale_factor = 1.0
-                    else:
-                        scale_factor -= 0.1
+                    scale_factor -= 0.1
+                    if scale_factor < 0.1:
+                        scale_factor = 0.1
                 time.sleep(0.5)
 
         word = ""
@@ -179,12 +173,28 @@ with mp_holistic.Holistic(
         elif y_pos + img_height > win_height:
             y_pos = win_height - img_height
 
-        img1 = cv2.resize(img1, (0, 0), fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_LINEAR)
+        # Handle zooming in and out
+        max_scale_factor = min(win_width / img_width, win_height / img_height)
+
+        if scale_factor > max_scale_factor:
+            scale_factor = min(scale_factor, max_scale_factor)
+        if scale_factor < 0.1:
+            scale_factor = 0.1
+
+        if img_height > win_height or img_width > win_width:
+            # If so, resize the image to fit the frame
+            img1 = cv2.resize(img1, (win_width, win_height))
+        else:
+            img1 = cv2.resize(img1, (0, 0), fx=scale_factor, fy=scale_factor)
 
         img_height, img_width = img1.shape[:2]
+        print("image: ", image.shape)
+        print("img1: ", img1.shape)
+
+        # Handle rotating the image (Rotate left or right)
 
         # Add the image to the frame
-        image[y_pos: y_pos + img_height, x_pos: x_pos + img_width] = img1
+        image[y_pos : y_pos + img_height, x_pos : x_pos + img_width] = img1
 
         # Draw header
         cv2.rectangle(image, (0, 0), (1280, 40), (255, 255, 255), -1)
